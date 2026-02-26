@@ -47,6 +47,8 @@ export default function FlashcardsScreen({ onStartQuiz, onBack }) {
             onClick={onBack}
             className="text-sm transition-colors duration-150"
             style={{ color: '#4DB8B0', background: 'none', border: 'none', cursor: 'pointer' }}
+            onMouseEnter={e => e.currentTarget.style.color = '#F0FAFA'}
+            onMouseLeave={e => e.currentTarget.style.color = '#4DB8B0'}
           >
             ← Back
           </button>
@@ -174,6 +176,14 @@ export default function FlashcardsScreen({ onStartQuiz, onBack }) {
               color: '#4DB8B0',
               cursor: 'pointer',
             }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.28)'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.5)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.15)'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.25)'
+            }}
           >
             ← Prev
           </button>
@@ -188,6 +198,14 @@ export default function FlashcardsScreen({ onStartQuiz, onBack }) {
               color: '#4DB8B0',
               cursor: 'pointer',
             }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.28)'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.5)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = flipped ? 'rgba(0,133,122,0.1)' : 'rgba(0,133,122,0.2)'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.4)'
+            }}
           >
             {flipped ? 'Hide Answer' : 'Show Answer'}
           </button>
@@ -201,6 +219,14 @@ export default function FlashcardsScreen({ onStartQuiz, onBack }) {
               border: '1px solid rgba(0,133,122,0.25)',
               color: '#4DB8B0',
               cursor: 'pointer',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.28)'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.5)'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.15)'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.25)'
             }}
           >
             Next →

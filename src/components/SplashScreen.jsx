@@ -53,11 +53,12 @@ export default function SplashScreen({ onStart }) {
           onMouseEnter={e => e.currentTarget.style.background = '#00A896'}
           onMouseLeave={e => e.currentTarget.style.background = '#00857A'}
         >
-          Accept All AI Changes →
+          YOLO, I have not read the terms{' '}
+          <span className="inline-block animate-bounce-right">→</span>
         </button>
 
         <p className="mt-6 text-sm" style={{ color: 'rgba(240,250,250,0.35)' }}>
-          Powered by vibes, not unit tests
+          Powered by vibes
         </p>
       </div>
     </div>

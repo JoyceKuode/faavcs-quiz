@@ -39,7 +39,7 @@ export const questions = [
       { id: "d", text: "Launch subagents with the Task tool — parallel, each with their own context" },
     ],
     correct: "d",
-    explanation: "Subagents (Task tool) run in parallel with independent context windows. Agent team = orchestrator + multiple subagents. This is the FAAVCS superpower.",
+    explanation: "Subagents (Task tool) run in parallel with independent context windows. Agent team = orchestrator + multiple subagents.",
   },
   {
     id: 4,

@@ -10,33 +10,32 @@ function getSnarkyComment(pct) {
   return { emoji: '💀', text: 'You wrote code, didn\'t you. We can tell.' }
 }
 
-export default function ResultsScreen({ score, totalTime, playerName, onLeaderboard, onPlayAgain }) {
+export default function ResultsScreen({ score, totalTime, onLeaderboard, onPlayAgain }) {
+  const [name, setName] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState(null)
 
   const pct = Math.round((score / MAX_SCORE) * 100)
   const { emoji, text } = getSnarkyComment(pct)
   const totalSec = (totalTime / 1000).toFixed(1)
+  const ready = name.trim().length > 0
 
   async function handleSubmit() {
     if (!supabase) {
-      // Supabase not configured — skip to leaderboard (dev mode)
-      onLeaderboard()
+      onLeaderboard(name.trim(), score)
       return
     }
     setSubmitting(true)
     setError(null)
     const { error: err } = await supabase
       .from('leaderboard')
-      .insert({ name: playerName, score, total_time: totalTime })
+      .insert({ name: name.trim(), score, total_time: totalTime })
     setSubmitting(false)
     if (err) {
       setError('Failed to save score. Check your connection.')
       return
     }
-    setSubmitted(true)
-    onLeaderboard()
+    onLeaderboard(name.trim(), score)
   }
 
   return (
@@ -46,13 +45,6 @@ export default function ResultsScreen({ score, totalTime, playerName, onLeaderbo
         style={{ background: '#1A2E2D', border: '1px solid rgba(0,133,122,0.3)' }}
       >
         <div className="text-6xl mb-4">{emoji}</div>
-
-        <h2
-          className="text-3xl mb-1"
-          style={{ fontFamily: '"Fredoka One", cursive', color: '#F0FAFA' }}
-        >
-          {playerName}
-        </h2>
         <p className="text-sm mb-6" style={{ color: '#4DB8B0' }}>{text}</p>
 
         {/* Score display */}
@@ -70,7 +62,6 @@ export default function ResultsScreen({ score, totalTime, playerName, onLeaderbo
             out of {MAX_SCORE.toLocaleString()} points
           </div>
 
-          {/* Progress bar */}
           <div
             className="w-full rounded-full overflow-hidden"
             style={{ height: '8px', background: 'rgba(240,250,250,0.1)' }}
@@ -95,19 +86,62 @@ export default function ResultsScreen({ score, totalTime, playerName, onLeaderbo
         )}
 
         <div className="flex flex-col gap-3">
+          <p className="text-sm font-semibold mb-1" style={{ color: '#4DB8B0', fontFamily: '"Fredoka One", cursive' }}>
+            Who are you?
+          </p>
+          <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            placeholder="e.g. Fredrik the Vibe Lord"
+            maxLength={30}
+            autoFocus
+            onKeyDown={e => e.key === 'Enter' && ready && !submitting && handleSubmit()}
+            className="w-full px-5 py-3 rounded-xl text-base outline-none"
+            style={{
+              background: '#0D1F1E',
+              border: '2px solid rgba(0,133,122,0.3)',
+              color: '#F0FAFA',
+              fontFamily: 'Inter, sans-serif',
+            }}
+            onFocus={e => e.target.style.borderColor = '#00857A'}
+            onBlur={e => e.target.style.borderColor = 'rgba(0,133,122,0.3)'}
+          />
           <button
             onClick={handleSubmit}
-            disabled={submitting}
+            disabled={!ready || submitting}
             className="py-3.5 rounded-xl text-lg font-semibold glow-teal transition-all duration-200"
             style={{
               fontFamily: '"Fredoka One", cursive',
-              background: '#00857A',
+              background: ready && !submitting ? '#00857A' : 'rgba(0,133,122,0.3)',
               color: '#F0FAFA',
-              opacity: submitting ? 0.7 : 1,
-              cursor: submitting ? 'wait' : 'pointer',
+              cursor: ready && !submitting ? 'pointer' : 'not-allowed',
             }}
+            onMouseEnter={e => { if (ready && !submitting) e.currentTarget.style.background = '#00A896' }}
+            onMouseLeave={e => { if (ready && !submitting) e.currentTarget.style.background = '#00857A' }}
           >
             {submitting ? 'Saving...' : '🏆 Submit to Leaderboard'}
+          </button>
+
+          <button
+            onClick={() => onLeaderboard(null, null)}
+            className="py-3 rounded-xl text-base transition-all duration-200"
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(0,133,122,0.3)',
+              color: '#4DB8B0',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.25)'
+              e.currentTarget.style.borderColor = '#00857A'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.3)'
+            }}
+          >
+            View Leaderboard
           </button>
 
           <button
@@ -115,9 +149,19 @@ export default function ResultsScreen({ score, totalTime, playerName, onLeaderbo
             className="py-3 rounded-xl text-base transition-all duration-200"
             style={{
               background: 'transparent',
-              border: '1px solid rgba(0,133,122,0.3)',
-              color: '#4DB8B0',
+              border: '1px solid rgba(0,133,122,0.15)',
+              color: 'rgba(240,250,250,0.35)',
               cursor: 'pointer',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.25)'
+              e.currentTarget.style.borderColor = '#00857A'
+              e.currentTarget.style.color = '#4DB8B0'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.15)'
+              e.currentTarget.style.color = 'rgba(240,250,250,0.35)'
             }}
           >
             Play Again

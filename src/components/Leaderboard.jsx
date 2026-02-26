@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase'
 
 const MEDALS = ['🥇', '🥈', '🥉']
 
-export default function Leaderboard({ playerName, playerScore, onPlayAgain }) {
+export default function Leaderboard({ playerName, playerScore, onPlayAgain, onBack }) {
   const [entries, setEntries] = useState([])
   const [loading, setLoading] = useState(true)
 
@@ -135,7 +135,28 @@ export default function Leaderboard({ playerName, playerScore, onPlayAgain }) {
           </div>
         )}
 
-        <div className="mt-6 flex justify-center">
+        <div className="mt-6 flex gap-3 justify-center">
+          <button
+            onClick={onBack}
+            className="px-8 py-3 rounded-xl text-base transition-all duration-200"
+            style={{
+              background: 'transparent',
+              border: '1px solid rgba(0,133,122,0.4)',
+              color: '#4DB8B0',
+              fontFamily: '"Fredoka One", cursive',
+              cursor: 'pointer',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.25)'
+              e.currentTarget.style.borderColor = '#00857A'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'transparent'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.4)'
+            }}
+          >
+            ← Back
+          </button>
           <button
             onClick={onPlayAgain}
             className="px-8 py-3 rounded-xl text-base transition-all duration-200"
@@ -146,8 +167,16 @@ export default function Leaderboard({ playerName, playerScore, onPlayAgain }) {
               fontFamily: '"Fredoka One", cursive',
               cursor: 'pointer',
             }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.25)'
+              e.currentTarget.style.borderColor = '#00857A'
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = 'rgba(0,133,122,0.15)'
+              e.currentTarget.style.borderColor = 'rgba(0,133,122,0.4)'
+            }}
           >
-            Play Again
+            Play
           </button>
         </div>
       </div>

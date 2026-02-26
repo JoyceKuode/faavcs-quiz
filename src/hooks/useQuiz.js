@@ -117,9 +117,9 @@ export function useQuiz() {
     setShuffledQuestions(shuffle(questions))
   }, [])
 
-  // Start timer when question changes
+  // Start timer when question changes — only after reset() has been called at least once
   useEffect(() => {
-    if (shuffledQuestions.length === 0 || isFinished) return
+    if (resetKey === 0 || shuffledQuestions.length === 0 || isFinished) return
     startTimer()
     return () => clearInterval(timerRef.current)
   }, [currentIndex, shuffledQuestions.length, resetKey])

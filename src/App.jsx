@@ -1,30 +1,21 @@
 import { useState } from 'react'
 import { useQuiz } from './hooks/useQuiz'
 import SplashScreen from './components/SplashScreen'
-import NameEntry from './components/NameEntry'
+import ModeSelect from './components/ModeSelect'
 import FlashcardsScreen from './components/FlashcardsScreen'
 import QuizQuestion from './components/QuizQuestion'
 import ResultsScreen from './components/ResultsScreen'
 import Leaderboard from './components/Leaderboard'
 
-// Screens: splash | name | study | quiz | results | leaderboard
+// Screens: splash | mode | study | quiz | results | leaderboard
 export default function App() {
   const [screen, setScreen] = useState('splash')
-  const [playerName, setPlayerName] = useState('')
+  const [playerName, setPlayerName] = useState(null)
+  const [playerScore, setPlayerScore] = useState(null)
 
   const quiz = useQuiz()
 
-  function handleStart() {
-    setScreen('name')
-  }
-
-  function handleStudy(name) {
-    setPlayerName(name)
-    setScreen('study')
-  }
-
-  function handleQuiz(name) {
-    setPlayerName(name)
+  function handleStartQuiz() {
     quiz.reset()
     setScreen('quiz')
   }
@@ -38,33 +29,41 @@ export default function App() {
     }
   }
 
-  function handleLeaderboard() {
+  function handleLeaderboard(name, score) {
+    setPlayerName(name)
+    setPlayerScore(score)
     setScreen('leaderboard')
   }
 
   function handlePlayAgain() {
-    quiz.reset()
-    setScreen('name')
+    setScreen('mode')
   }
 
   if (screen === 'splash') {
-    return <SplashScreen onStart={handleStart} />
+    return <SplashScreen onStart={() => setScreen('mode')} />
   }
 
-  if (screen === 'name') {
-    return <NameEntry onStudy={handleStudy} onQuiz={handleQuiz} />
+  if (screen === 'mode') {
+    return (
+      <ModeSelect
+        onQuiz={handleStartQuiz}
+        onStudy={() => setScreen('study')}
+        onLeaderboard={() => handleLeaderboard(null, null)}
+      />
+    )
   }
 
   if (screen === 'study') {
     return (
       <FlashcardsScreen
-        onStartQuiz={() => { quiz.reset(); setScreen('quiz') }}
-        onBack={() => setScreen('name')}
+        onStartQuiz={handleStartQuiz}
+        onBack={() => setScreen('mode')}
       />
     )
   }
 
-  if (screen === 'quiz' && quiz.currentQuestion) {
+  if (screen === 'quiz') {
+    if (!quiz.currentQuestion) return null
     return (
       <QuizQuestion
         question={quiz.currentQuestion}
@@ -87,7 +86,6 @@ export default function App() {
       <ResultsScreen
         score={quiz.score}
         totalTime={quiz.totalTime}
-        playerName={playerName}
         onLeaderboard={handleLeaderboard}
         onPlayAgain={handlePlayAgain}
       />
@@ -98,7 +96,8 @@ export default function App() {
     return (
       <Leaderboard
         playerName={playerName}
-        playerScore={quiz.score}
+        playerScore={playerScore}
+        onBack={() => setScreen('mode')}
         onPlayAgain={handlePlayAgain}
       />
     )

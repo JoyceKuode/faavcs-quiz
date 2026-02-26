@@ -26,6 +26,7 @@ export function useQuiz() {
   const [answers, setAnswers] = useState([])
   const [isFinished, setIsFinished] = useState(false)
 
+  const [resetKey, setResetKey] = useState(0)
   const timerRef = useRef(null)
   const startTimeRef = useRef(null)
 
@@ -108,6 +109,7 @@ export function useQuiz() {
     setTotalTime(0)
     setAnswers([])
     setIsFinished(false)
+    setResetKey(k => k + 1)
   }
 
   // Shuffle questions on mount
@@ -120,7 +122,7 @@ export function useQuiz() {
     if (shuffledQuestions.length === 0 || isFinished) return
     startTimer()
     return () => clearInterval(timerRef.current)
-  }, [currentIndex, shuffledQuestions.length])
+  }, [currentIndex, shuffledQuestions.length, resetKey])
 
   return {
     currentQuestion,
